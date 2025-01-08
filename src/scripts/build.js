@@ -26,6 +26,13 @@ async function buildPages(template) {
     const files = await fs.readdir(pagesDir).catch(() => []);
     
     for (const file of files) {
+        // Handle index.html specially - copy it directly if it exists
+        if (file === 'index.html') {
+            await fs.copy(path.join(pagesDir, file), path.join('dist', file));
+            continue;
+        }
+
+        // Process other markdown files as before
         if (file.endsWith('.md')) {
             const content = await fs.readFile(path.join(pagesDir, file), 'utf-8');
             const html = marked(content);
